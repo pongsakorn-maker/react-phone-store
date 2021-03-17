@@ -30,8 +30,11 @@ func GetPhone(c *fiber.Ctx) {
 
 func CreatePhone(c *fiber.Ctx) {
 	db := database.DBConnection
-	var phone Phone
-	phone.PhoneModel = "Iphone 13"
+	phone := new(Phone)
+	if err := c.BodyParser(phone); err != nil {
+		c.Status(503).Send(err)
+		return
+	}
 	db.Create(&phone)
 	c.JSON(phone)
 	c.Status(201).Send("Creates a new phone")
